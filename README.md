@@ -1,40 +1,38 @@
 # Bird Strike Window Cleaning
 
-Static single-page site for Bird Strike Window Cleaning (Knoxville, TN). Deploy to **GitHub Pages** — no backend required. The Web3Forms **access key** is injected at build from **`.env`** (or GitHub Secrets); it’s never committed.
+Static single-page site for Bird Strike Window Cleaning (Knoxville, TN). Deploy to **GitHub Pages** — no backend required.
 
-## Build and deploy
+## Deploy to GitHub Pages
 
-### Option A: GitHub Actions (recommended)
+1. Create a new GitHub repo (or use this one) and push the project.
+2. Go to **Settings → Pages**.
+3. Under **Source**, choose **Deploy from a branch**.
+4. Branch: **main** (or **master**), folder: **/ (root)**.
+5. Save. The site will be at `https://<username>.github.io/<repo>/`.
 
-1. Get a Web3Forms access key from [web3forms.com](https://web3forms.com) (they email it to you).
-2. In your repo: **Settings → Secrets and variables → Actions → New repository secret**. Name: `WEB3FORMS_ACCESS_KEY`, value: your key.
-3. **Settings → Pages → Source:** **Deploy from a branch**. Branch: **gh-pages**, folder: **/ (root)**. Save.
-4. Push to `main` (or `master`). The workflow builds, injects the key, and deploys `dist/` to the `gh-pages` branch.
-
-The site stays **static**; the key is only used during the build.
-
-### Option B: Local build
-
-1. Copy `.env.example` to `.env` and set `WEB3FORMS_ACCESS_KEY=your_key`.
-2. Run `npm install` then `npm run build`.
-3. Deploy the **`dist/`** folder to GitHub Pages (e.g. push `dist` contents to a `gh-pages` branch, or use any static host).
+Use **index.html** as the main page. The form posts to **Web3Forms**; thank-you redirect goes to **thank-you.html**.
 
 ## Form → Email (Web3Forms)
 
-The estimate form uses [Web3Forms](https://web3forms.com). The access key is read from **`.env`** (local) or **`WEB3FORMS_ACCESS_KEY`** (GitHub Secrets) at build time and injected into the HTML. Submissions go to the email you used when creating the key. Users are redirected to **thank-you.html** after submit.
+The estimate form uses [Web3Forms](https://web3forms.com). **One key, no activation** — they email you the key, you add it, done.
+
+### Setup (one-time)
+
+1. Go to **[web3forms.com](https://web3forms.com)** and enter the email where you want submissions (**alleriawar@gmail.com** or **blakeb2024@gmail.com**).
+2. Submit. They’ll email you an **access key** (long string).
+3. In **index.html**, find the form and replace `YOUR_ACCESS_KEY` in the hidden `access_key` input with that key.
+
+Submissions go to your email. Users are redirected to **thank-you.html** after submit.
 
 ## Project structure
 
 ```
-├── index.html      # Source (placeholder __WEB3FORMS_ACCESS_KEY__)
-├── thank-you.html
+├── index.html      # Main page
+├── thank-you.html  # Post-form redirect
 ├── styles.css
 ├── script.js
 ├── images/
-├── build.js        # Injects key, outputs dist/
-├── .env.example    # Copy to .env and add your key
-├── .github/workflows/deploy.yml
-└── dist/           # Build output (gitignored); deploy this
+└── README.md
 ```
 
 ## Replace before go-live
