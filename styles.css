@@ -271,7 +271,7 @@ h2 { font-size: clamp(1.35rem, 3vw, 1.65rem); margin-top: 0; }
   position: absolute;
   inset: 0;
   background: linear-gradient(180deg, rgba(13,13,13,0.7) 0%, rgba(13,13,13,0.85) 50%, var(--bg) 100%),
-    url("https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=1920&q=80") center / cover no-repeat;
+    url("https://plus.unsplash.com/premium_photo-1748880122478-5bc5537d4666?w=1920&q=80") center / cover no-repeat;
 }
 
 .hero-inner {
