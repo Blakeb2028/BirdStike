@@ -1,0 +1,7 @@
+{
+  "name": "birdstrike-window-cleaning",
+  "private": true,
+  "scripts": {
+    "build": "node build.js"
+  }
+}

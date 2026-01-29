@@ -43,17 +43,25 @@
     });
   }
 
-  // Form validation before submit
+  // Form: validate, then submit via Formspree (AJAX) and redirect to thank-you
   var form = document.querySelector('.estimate-form');
   if (form) {
     form.addEventListener('submit', function (e) {
-      var name = form.querySelector('#name');
-      var email = form.querySelector('#email');
-      var address = form.querySelector('#address');
-      var type = form.querySelector('#type');
+      e.preventDefault();
+
+      var required = [
+        form.querySelector('#first'),
+        form.querySelector('#last'),
+        form.querySelector('#street'),
+        form.querySelector('#city'),
+        form.querySelector('#state'),
+        form.querySelector('#zip'),
+        form.querySelector('#phone'),
+        form.querySelector('#email')
+      ];
       var invalid = false;
 
-      [name, email, address, type].forEach(function (el) {
+      required.forEach(function (el) {
         if (!el) return;
         el.removeAttribute('aria-invalid');
         if (el.hasAttribute('required') && !el.value.trim()) {
@@ -69,9 +77,60 @@
         }
       });
 
-      if (invalid) {
-        e.preventDefault();
+      function checkRadio(name) {
+        var group = form.querySelectorAll('input[name="' + name + '"]');
+        var checked = false;
+        group.forEach(function (r) {
+          if (r.checked) checked = true;
+        });
+        if (!checked && group.length) {
+          invalid = true;
+          group.forEach(function (r) { r.setAttribute('aria-invalid', 'true'); });
+        } else {
+          group.forEach(function (r) { r.removeAttribute('aria-invalid'); });
+        }
       }
+      checkRadio('previous_customer');
+      checkRadio('request_for');
+
+      if (invalid) return;
+
+      var submitBtn = form.querySelector('button[type="submit"]');
+      var btnText = submitBtn ? submitBtn.textContent : '';
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Sending…';
+      }
+
+      var fd = new FormData(form);
+      fetch(form.action, {
+        method: 'POST',
+        body: fd,
+        headers: { Accept: 'application/json' }
+      })
+        .then(function (res) {
+          return res.json().then(function (d) { return { ok: res.ok, data: d }; }).catch(function () {
+            return { ok: res.ok, data: null };
+          });
+        })
+        .then(function (r) {
+          if (r.ok && r.data && r.data.success) {
+            window.location.href = new URL('thank-you.html', window.location.href).href;
+          } else {
+            if (submitBtn) {
+              submitBtn.disabled = false;
+              submitBtn.textContent = btnText;
+            }
+            alert(r.data && r.data.message ? r.data.message : 'Something went wrong. Please try again or email us directly.');
+          }
+        })
+        .catch(function () {
+          if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.textContent = btnText;
+          }
+          alert('Something went wrong. Please try again or email us directly.');
+        });
     });
   }
 
@@ -98,6 +157,40 @@
   } else {
     animated.forEach(function (el) { el.classList.add('animated'); });
   }
+
+  // Modal popups: Privacy policy & Terms and conditions
+  document.querySelectorAll('.modal-link').forEach(function (a) {
+    a.addEventListener('click', function (e) {
+      e.preventDefault();
+      var id = a.getAttribute('data-modal');
+      var modal = id ? document.getElementById('modal-' + id) : null;
+      if (modal) {
+        modal.removeAttribute('hidden');
+        document.body.style.overflow = 'hidden';
+      }
+    });
+  });
+
+  function closeModal(modal) {
+    if (modal) {
+      modal.setAttribute('hidden', '');
+      document.body.style.overflow = '';
+    }
+  }
+
+  document.querySelectorAll('.modal').forEach(function (modal) {
+    var overlay = modal.querySelector('.modal-overlay');
+    var closeBtn = modal.querySelector('.modal-close');
+    if (overlay) overlay.addEventListener('click', function () { closeModal(modal); });
+    if (closeBtn) closeBtn.addEventListener('click', function () { closeModal(modal); });
+  });
+
+  document.addEventListener('keydown', function (e) {
+    if (e.key !== 'Escape') return;
+    document.querySelectorAll('.modal').forEach(function (m) {
+      if (!m.hasAttribute('hidden')) closeModal(m);
+    });
+  });
 
   // Sticky CTA bar: show when scrolled past hero, hide when contact or footer in view
   var stickyCta = document.getElementById('sticky-cta');
