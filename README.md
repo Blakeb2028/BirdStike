@@ -18,7 +18,7 @@ The estimate form uses [Web3Forms](https://web3forms.com). **One key, no activat
 
 ### Setup (one-time)
 
-1. Go to **[web3forms.com](https://web3forms.com)** and enter the email where you want submissions (**alleriawar@gmail.com** or **blakeb2024@gmail.com**).
+1. Go to **[web3forms.com](https://web3forms.com)** and enter the email where you want submissions.
 2. Submit. They’ll email you an **access key** (long string).
 3. In **index.html**, find the form and replace `YOUR_ACCESS_KEY` in the hidden `access_key` input with that key.
 
